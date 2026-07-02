@@ -24,9 +24,12 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     with WidgetsBindingObserver {
   bool _payLaunched = false;
   StreamSubscription<PaymentCallbackData>? _callbackSub;
+  late OrderProvider _orderProvider;
+
   @override
   void initState() {
     super.initState();
+    _orderProvider = context.read<OrderProvider>();
     _log('─────────────────────────────────────────');
     _log(
       'initState | orderId=${widget.order.id} '
@@ -49,7 +52,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     }
 
     _log('⏱ Memulai polling backend (orderId=${widget.order.id})');
-    context.read<OrderProvider>().startPaymentPolling(widget.order.id);
+    _orderProvider.startPaymentPolling(widget.order.id);
 
     // Periksa callback yang masuk saat cold start
     final pending = GlobalInstitutePayService().consumePendingCallback();
@@ -98,7 +101,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     _log('dispose | orderId=${widget.order.id}');
     _callbackSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
-    context.read<OrderProvider>().stopPaymentPolling();
+    _orderProvider.stopPaymentPolling();
     super.dispose();
   }
 
@@ -109,7 +112,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
       _log(
         ' Resumed setelah launch → cek status sekali (orderId=${widget.order.id})',
       );
-      context.read<OrderProvider>().checkPaymentStatus(widget.order.id);
+      _orderProvider.checkPaymentStatus(widget.order.id);
     }
   }
 
@@ -179,14 +182,19 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     return 'Rp. ${buffer.toString().split('').reversed.join()}';
   }
 
+  bool _isTransitioning = false;
+
   void _onPaymentSuccess() {
+    if (!mounted || _isTransitioning) return;
+    _isTransitioning = true;
     _log(' _onPaymentSuccess dipanggil — hentikan polling & navigasi');
-    context.read<OrderProvider>().stopPaymentPolling();
+    _orderProvider.stopPaymentPolling();
+    _orderProvider.resetPaymentCheckStatus();
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppRouter.orderSuccess,
       (route) => route.settings.name == AppRouter.dashboard,
-      arguments: context.read<OrderProvider>().lastOrder ?? widget.order,
+      arguments: _orderProvider.lastOrder ?? widget.order,
     );
   }
 
