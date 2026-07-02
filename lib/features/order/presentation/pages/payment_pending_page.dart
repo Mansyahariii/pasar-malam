@@ -23,7 +23,6 @@ class PaymentPendingPage extends StatefulWidget {
 class _PaymentPendingPageState extends State<PaymentPendingPage>
     with WidgetsBindingObserver {
   bool _payLaunched = false;
-  StreamSubscription<PaymentCallbackData>? _callbackSub;
   late OrderProvider _orderProvider;
 
   @override
@@ -40,7 +39,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     WidgetsBinding.instance.addObserver(this);
 
     if (widget.order.paymentMethod == 'global_institute_pay') {
-      _log(' Akan auto-launch Dompet Kampus Global setelah frame pertama');
+      _log(' Akan auto-launch Monplace setelah frame pertama');
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _launchGlobalInstitutePay(),
       );
@@ -54,52 +53,12 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
     _log('⏱ Memulai polling backend (orderId=${widget.order.id})');
     _orderProvider.startPaymentPolling(widget.order.id);
 
-    // Periksa callback yang masuk saat cold start
-    final pending = GlobalInstitutePayService().consumePendingCallback();
-    if (pending != null) {
-      _log(' Cold-start callback ditemukan: $pending');
-      if (pending.isSuccess) {
-        _log(' Cold-start callback sukses → navigasi ke OrderSuccess');
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => _onPaymentSuccess(),
-        );
-      } else {
-        _log(' Cold-start callback gagal (status=${pending.status})');
-      }
-    } else {
-      _log('ℹ Tidak ada pending cold-start callback');
-    }
-
-    // Subscribe stream callback (app berjalan di background/foreground)
-    _log(' Subscribe GlobalInstitutePayService.onCallback stream...');
-    _callbackSub = GlobalInstitutePayService().onCallback.listen((data) {
-      _log(' Callback diterima dari stream: $data');
-      if (!mounted || !context.mounted) {
-        _log('Widget sudah di-dispose atau tidak mounted, callback diabaikan');
-        return;
-      }
-      if (data.isSuccess) {
-        _log(' Status sukses → navigasi ke OrderSuccess');
-        _onPaymentSuccess();
-      } else {
-        _log(' Status gagal (status=${data.status}) → tampil snackbar');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Pembayaran gagal atau dibatalkan (status: ${data.status})',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
     _log('initState selesai.');
   }
 
   @override
   void dispose() {
     _log('dispose | orderId=${widget.order.id}');
-    _callbackSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _orderProvider.stopPaymentPolling();
     super.dispose();
@@ -144,7 +103,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
       _log('canLaunchUrl=false — tetap mencoba launchUrl langsung...');
       _log('Kemungkinan penyebab false-negatif:');
       _log('1. APK belum di-rebuild setelah perubahan AndroidManifest.xml');
-      _log('2. Aplikasi Dompet Kampus Global belum terinstal di perangkat ini');
+      _log('2. Aplikasi Monplace belum terinstal di perangkat ini');
     }
 
     _log(' Memanggil launchUrl (mode=externalApplication)...');
@@ -155,7 +114,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
       );
       _log('launchUrl → $launched');
       if (launched) {
-        _log(' Dompet Kampus Global berhasil dibuka');
+        _log(' Monplace berhasil dibuka');
         setState(() => _payLaunched = true);
       } else {
         _log('launchUrl=false — aplikasi ada tapi tidak merespons');
@@ -164,7 +123,7 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
       }
     } catch (e) {
       _log(' Exception launchUrl: $e');
-      _log('→ Aplikasi Dompet Kampus Global kemungkinan tidak terinstal');
+      _log('→ Aplikasi Monplace kemungkinan tidak terinstal');
       if (!mounted) return;
       _showAppNotFoundDialog();
     }
@@ -209,12 +168,12 @@ class _PaymentPendingPageState extends State<PaymentPendingPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Aplikasi Dompet Kampus Global tidak terinstal di perangkat ini.',
+              'Aplikasi Monplace tidak terinstal di perangkat ini.',
             ),
             SizedBox(height: 12),
             Text(
               'Pesanan Anda tetap tersimpan. Lakukan pembayaran melalui aplikasi '
-              'Dompet Kampus Global, lalu kembali untuk mengecek status.',
+              'Monplace, lalu kembali untuk mengecek status.',
               style: TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
@@ -576,7 +535,7 @@ class _BankStepTile extends StatelessWidget {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Global Institute Pay Body
+// Monplace Body
 // ──────────────────────────────────────────────────────────────
 
 class _GlobalInstitutePayBody extends StatelessWidget {
@@ -619,14 +578,14 @@ class _GlobalInstitutePayBody extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: const Icon(
-              Icons.school_rounded,
+              Icons.account_balance_wallet,
               size: 46,
               color: _brandColor,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            'Bayar dengan Global Institute Pay',
+            'Bayar dengan Monplace',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
@@ -664,7 +623,7 @@ class _GlobalInstitutePayBody extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Pembayaran akan diverifikasi dengan PIN dan kode 2FA di aplikasi Dompet Kampus Global',
+                    'Pembayaran akan diverifikasi dengan PIN dan kode 2FA di aplikasi Monplace',
                     style: TextStyle(
                       fontSize: 12,
                       color: _brandColor.withValues(alpha: 0.85),
@@ -698,8 +657,8 @@ class _GlobalInstitutePayBody extends StatelessWidget {
                 _StepItem(
                   number: '1',
                   text: payLaunched
-                      ? 'Aplikasi Dompet Kampus Global sudah dibuka'
-                      : 'Kamu akan diarahkan ke Dompet Kampus Global',
+                      ? 'Aplikasi Monplace sudah dibuka'
+                      : 'Kamu akan diarahkan ke Monplace',
                   done: payLaunched,
                 ),
                 const SizedBox(height: 14),
@@ -722,7 +681,7 @@ class _GlobalInstitutePayBody extends StatelessWidget {
 
           const SizedBox(height: 28),
 
-          // ── Tombol buka Dompet Kampus Global ─────────────────
+          // ── Tombol buka Monplace ─────────────────
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -737,8 +696,8 @@ class _GlobalInstitutePayBody extends StatelessWidget {
               icon: const Icon(Icons.open_in_new),
               label: Text(
                 payLaunched
-                    ? 'Buka Kembali Dompet Kampus Global'
-                    : 'Buka Dompet Kampus Global',
+                    ? 'Buka Kembali Monplace'
+                    : 'Buka Monplace',
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -757,7 +716,7 @@ class _GlobalInstitutePayBody extends StatelessWidget {
 
           if (payStatus == PaymentCheckStatus.idle && payLaunched)
             Text(
-              'Menunggu konfirmasi pembayaran dari Dompet Kampus Global...',
+              'Menunggu konfirmasi pembayaran dari Monplace...',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
