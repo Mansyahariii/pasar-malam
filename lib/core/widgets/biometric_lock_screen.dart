@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_biometric_kit/flutter_biometric_kit.dart';
 import 'package:provider/provider.dart';
@@ -199,11 +200,27 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                   onPressed: () async {
                     final authProv = context.read<AuthProvider>();
                     await authProv.logout();
+                    if (context.mounted) {
+                      context.read<BiometricLockProvider>().bypassLock();
+                    }
                   },
                   icon: const Icon(Icons.logout, size: 16),
                   label: const Text('Keluar Akun / Login Ulang'),
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
                 ),
+
+                // Tombol Bypass khusus mode Debug/Testing
+                if (kDebugMode) ...[
+                  const SizedBox(height: 10),
+                  TextButton.icon(
+                    onPressed: () {
+                      context.read<BiometricLockProvider>().bypassLock();
+                    },
+                    icon: const Icon(Icons.developer_mode, size: 16),
+                    label: const Text('Bypass Kunci (Debug Mode)'),
+                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
+                  ),
+                ],
               ],
             ),
           ),

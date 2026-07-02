@@ -71,5 +71,14 @@ class BiometricLockProvider extends ChangeNotifier {
     } finally {
       _isAuthenticating = false;
       notifyListeners();
+    }
+  }
+
+  /// Bypass kunci layar (berguna saat pengujian/debug)
+  void bypassLock() {
+    _isLocked = false;
+    _errorMessage = null;
+    _errorCode = null;
+    notifyListeners();
   }
 }
