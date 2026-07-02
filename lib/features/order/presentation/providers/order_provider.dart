@@ -82,6 +82,16 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
+  Future<OrderModel?> getOrderDetail(int orderId) async {
+    try {
+      final order = await _repository.getOrderDetail(orderId);
+      return order;
+    } catch (e) {
+      debugPrint('[PasarMalam/OrderProvider] Error getOrderDetail: $e');
+      return null;
+    }
+  }
+
   // ── Payment Status Check ───────────────────────────────────
 
   /// Cek status pembayaran sekali (manual tap atau saat kembali dari GoPay)
