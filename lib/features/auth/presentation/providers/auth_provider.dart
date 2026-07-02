@@ -90,6 +90,35 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Cek Persistent Auth (Startup/Deep Link) ────────────
+  Future<void> checkPersistentAuth() async {
+    try {
+      final token = await SecureStorageService.getToken();
+      final currentUser = _auth.currentUser;
+
+      debugPrint('[AUTH] checkPersistentAuth | token: ${token != null ? "ada" : "null"} | firebaseUser: ${currentUser?.email}');
+
+      if (token != null) {
+        _backendToken = token;
+        _firebaseUser = currentUser;
+        if (currentUser != null && !currentUser.emailVerified) {
+          _status = AuthStatus.emailNotVerified;
+        } else {
+          _status = AuthStatus.authenticated;
+          NotificationService.updateFcmToken();
+        }
+      } else {
+        _status = AuthStatus.unauthenticated;
+        _backendToken = null;
+        _firebaseUser = null;
+      }
+    } catch (e) {
+      debugPrint('[AUTH] checkPersistentAuth error: $e');
+      _status = AuthStatus.unauthenticated;
+    }
+    notifyListeners();
+  }
+
   // ─── Login dengan Email & Password ──────────────────────
   Future<bool> loginWithEmail({
     required String email,

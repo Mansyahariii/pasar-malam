@@ -83,9 +83,12 @@ class _SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    final token = await SecureStorageService.getToken();
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.checkPersistentAuth();
+
     if (!mounted) return;
-    final route = (token != null)
+    final route = (authProvider.status == AuthStatus.authenticated ||
+            authProvider.status == AuthStatus.emailNotVerified)
         ? AppRouter.dashboard
         : AppRouter.login;
     Navigator.pushReplacementNamed(context, route);
