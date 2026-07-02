@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "1029957735829",
+    "project_id": "w4-catalog",
+    "storage_bucket": "w4-catalog.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1029957735829:android:91568779071d3c6eab129c",
+        "android_client_info": {
+          "package_name": "com.example.market_place"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1029957735829-5k884u79es85fearjrpnsbnlb7s1mq01.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.market_place",
+            "certificate_hash": "3921e06105599ccb71f8357b81da20a6c1e33e6c"
+          }
+        },
+        {
+          "client_id": "1029957735829-cru21ejdric43ukashkrpi8987d32tbp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.market_place",
+            "certificate_hash": "43ac11ca74d7c3496b9c5c0c3ed0baa72230bf73"
+          }
+        },
+        {
+          "client_id": "1029957735829-92731o7vv5nsemr1ej1ipr9gsss4psas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QICOJauHdO0Nk9icO_b5vezneeoybSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1029957735829-92731o7vv5nsemr1ej1ipr9gsss4psas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1029957735829-sf65b8d9c3al194g5nnbvsb00nnfngeo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.marketPlace"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1029957735829:android:b2a2ba36c9ef2ec3ab129c",
+        "android_client_info": {
+          "package_name": "com.example.pasar_malam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1029957735829-92731o7vv5nsemr1ej1ipr9gsss4psas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QICOJauHdO0Nk9icO_b5vezneeoybSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1029957735829-92731o7vv5nsemr1ej1ipr9gsss4psas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1029957735829-sf65b8d9c3al194g5nnbvsb00nnfngeo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.marketPlace"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
