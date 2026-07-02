@@ -79,7 +79,7 @@
 	</array>
 	<key>LSApplicationQueriesSchemes</key>    
     <array>    
-        <string>monplace</string>    <!-- ← Dompet Kampus Global -->    
+        <string>monplace</string>    <!-- ← Monplace -->    
     </array>
 </dict>
 </plist>
