@@ -26,7 +26,7 @@ class PaymentCallbackData {
 
 // ── Service ───────────────────────────────────────────────────
 
-/// Mengelola deeplink keluar ke Dompet Kampus Global
+/// Mengelola deeplink keluar ke Monplace
 /// dan deeplink masuk (callback pembayaran) ke Home Living.
 class GlobalInstitutePayService {
  static final GlobalInstitutePayService _instance = GlobalInstitutePayService._();
@@ -124,7 +124,7 @@ class GlobalInstitutePayService {
 
  // ── Build URL keluar ─────────────────────────────────────────
 
- /// Membangun URL deeplink ke Dompet Kampus Global sesuai spesifikasi.
+ /// Membangun URL deeplink ke Monplace sesuai spesifikasi.
  static String buildDeeplinkUrl({
  required int orderId,
  required double amount,
