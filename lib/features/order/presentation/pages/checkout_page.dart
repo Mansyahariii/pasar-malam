@@ -22,9 +22,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
  static const List<_PaymentOption> _paymentOptions = [
  _PaymentOption(
  value: 'global_institute_pay',
- label: 'Global Institute Pay',
- subtitle: 'Bayar via Dompet Kampus Global',
- icon: Icons.school_rounded,
+ label: 'Monplace',
+ subtitle: 'Bayar via Monplace',
+ icon: Icons.account_balance_wallet,
  iconColor: Color(0xFF1A237E),
  ),
  _PaymentOption(
