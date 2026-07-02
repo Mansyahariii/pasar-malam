@@ -145,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           context,
                           AppRouter.login,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Masuk',
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,

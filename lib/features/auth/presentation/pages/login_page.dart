@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                           context,
                           AppRouter.register,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Daftar',
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,

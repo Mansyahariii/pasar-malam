@@ -144,7 +144,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             TextButton(
                               onPressed: () {},
-                              child: const Text(
+                              child: Text(
                                 'See All',
                                 style: TextStyle(
                                   color: Theme.of(context).primaryColor,
@@ -178,10 +178,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
 
                     // ── For You label ─────────────────────
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-                        child: const Text(
+                        padding: EdgeInsets.fromLTRB(16, 24, 16, 12),
+                        child: Text(
                           'For you',
                           style: TextStyle(
                             fontSize: 18,
