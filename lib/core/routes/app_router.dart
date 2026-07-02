@@ -10,9 +10,14 @@ import 'package:pasar_malam/features/order/presentation/pages/checkout_page.dart
 import 'package:pasar_malam/features/order/presentation/pages/my_orders_page.dart';
 import 'package:pasar_malam/features/order/presentation/pages/order_success_page.dart';
 import 'package:pasar_malam/features/order/presentation/pages/payment_pending_page.dart';
+import 'package:pasar_malam/core/services/global_institute_pay_service.dart';
+import 'package:pasar_malam/features/order/presentation/providers/order_provider.dart';
 import 'package:provider/provider.dart';
 
 class AppRouter {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
@@ -87,10 +92,38 @@ class _SplashPageState extends State<SplashPage> {
     await authProvider.checkPersistentAuth();
 
     if (!mounted) return;
-    final route = (authProvider.status == AuthStatus.authenticated ||
-            authProvider.status == AuthStatus.emailNotVerified)
-        ? AppRouter.dashboard
-        : AppRouter.login;
+
+    final isAuthenticated = authProvider.status == AuthStatus.authenticated ||
+        authProvider.status == AuthStatus.emailNotVerified;
+
+    if (isAuthenticated) {
+      // Periksa pending callback cold start
+      final pending = GlobalInstitutePayService().consumePendingCallback();
+      if (pending != null && pending.isSuccess) {
+        final ref = pending.reference;
+        if (ref != null && ref.startsWith('INV-')) {
+          final orderId = int.tryParse(ref.replaceFirst('INV-', ''));
+          if (orderId != null) {
+            final orderProvider = context.read<OrderProvider>();
+            final order = await orderProvider.getOrderDetail(orderId);
+            if (!mounted) return;
+            if (order != null) {
+              // Navigasi ke dashboard sebagai base, lalu success
+              Navigator.pushReplacementNamed(context, AppRouter.dashboard);
+              Navigator.pushNamed(
+                context,
+                AppRouter.orderSuccess,
+                arguments: order,
+              );
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    if (!mounted) return;
+    final route = isAuthenticated ? AppRouter.dashboard : AppRouter.login;
     Navigator.pushReplacementNamed(context, route);
   }
 
